@@ -39,33 +39,40 @@ app.get('/api/notes', (req, res) =>
 // POST
 
 
-// POST for new note
+
+// POST for saving note
 app.post('/api/notes', (req, res) => {
     // Log that a POST request was received
-    console.info(`${req.method} request received for a new note`);
+    console.info(`${req.method} request received saving a note`);
 
-    // Destructuring assignment for the items in req.body
-    const { title, text } = req.body;
+    
+    // console.info(req.body);
+    const theBody = req.body;
+    let newTitle = theBody.title;
+    let newText = theBody.text;
 
-    // If all the required properties are present
-    if (title && text) {
-      // Variable for the object we will save
-        const newNote = {
-            title,
-            text,
+    if (theBody) {
+        const saveNote = {
             id: uuid(),
+            newTitle,
+            newText,
         };
 
-        readAndAppend(newNote, '../db/db.json');
+        console.info(saveNote);
+        // const parsedData = JSON.parse(saveNote);
+        // parsedData.push(content);
+
+        db.push(saveNote);
+        
 
         const response = {
             status: 'success',
-            body: newNote,
+            body: saveNote,
         };
 
         res.json(response);
     } else {
-        res.json('Error in posting feedback');
+        res.json('Error in saving note');
     }
 });
 
