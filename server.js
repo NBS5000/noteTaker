@@ -33,11 +33,14 @@ app.get('/notes', (req, res) =>
 );
 app.get('/api/notes', (req, res) => {
     // let dbJson;
-    // fs.readFileSync('./db/db.json', function (err, data) {
-    //     dbJson = data;
-    // });
+    fs.readFile('./db/db.json', { encoding: "utf-8" },function (err, data) {
+        if(err){ 
+            return res.status(500).json({ error: err.message})
+        }
+        res.json(JSON.parse(data));
+    });
     // res.dbJson;
-    res.json(db);
+    // res.json(db);
 });
 
 
