@@ -1,6 +1,7 @@
 const express = require('express');
+const fs = require('fs');
 const path = require('path');
-const db = require('./db/db.json');
+var db = require('./db/db.json');
 const uuid = require('./helpers/uuid');
 
 const PORT = process.env.PORT || 3001;
@@ -10,7 +11,6 @@ const app = express();
 // Middleware *****
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use('/api', api);
 app.use(express.static('public'));
 
 
@@ -31,9 +31,14 @@ app.get('/', (req, res) =>
 app.get('/notes', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
-app.get('/api/notes', (req, res) =>
-    res.json(db)
-);
+app.get('/api/notes', (req, res) => {
+    // let dbJson;
+    // fs.readFile('./db/db.json', function (err, data) {
+    //     dbJson = JSON.parse(data);
+    // });
+    // res.json(dbJson);
+    res.json(db);
+});
 
 
 // POST
@@ -52,25 +57,30 @@ app.post('/api/notes', (req, res) => {
     let text = theBody.text;
 
     if (theBody) {
-        console.info("Test");
-        const saveNote = {
+        let saveNote = {
             id: uuid(),
             title,
             text,
         };
-        console.info("Test2");
-        console.info(saveNote);
+        fs.readFile('./db/db.json', function (err, data) {
+            const dbJson = JSON.parse(data);
+            console.log(dbJson);
+            dbJson.push(saveNote);
+            console.log(dbJson);
+            fs.writeFile('./db/db.json', JSON.stringify(dbJson),function(err, result) {
+                if(err) console.log('Error writing to db: ', err);
+            });
+        });
 
-        console.info("Test3");
-        db.push(saveNote);
-        console.info("Test4");
+
+
+        // db.push(saveNote);
 
         const response = {
             status: 'success',
             body: saveNote,
         };
-        console.info("Test5");
-        console.info(response);
+
         res.json(response);
     } else {
         res.json('Error in saving note');
