@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-var db = require('./db/db.json');
+let db = require('./db/db.json');
 const uuid = require('./helpers/uuid');
 
 const PORT = process.env.PORT || 3001;
@@ -33,10 +33,10 @@ app.get('/notes', (req, res) =>
 );
 app.get('/api/notes', (req, res) => {
     // let dbJson;
-    // fs.readFile('./db/db.json', function (err, data) {
-    //     dbJson = JSON.parse(data);
+    // fs.readFileSync('./db/db.json', function (err, data) {
+    //     dbJson = data;
     // });
-    // res.json(dbJson);
+    // res.dbJson;
     res.json(db);
 });
 
@@ -78,7 +78,7 @@ app.post('/api/notes', (req, res) => {
             status: 'success',
             body: saveNote,
         };
-
+        db = require('./db/db.json');
         res.json(response);
     } else {
         res.json('Error in saving note');
@@ -111,7 +111,11 @@ app.delete('/api/notes/:id', (req, res) =>{
         });
     });
 
-
+    const response = {
+        status: 'success'
+    };
+    db = require('./db/db.json');
+    res.json(response);
 
 });
 
