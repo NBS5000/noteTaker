@@ -48,28 +48,29 @@ app.post('/api/notes', (req, res) => {
     
     // console.info(req.body);
     const theBody = req.body;
-    let newTitle = theBody.title;
-    let newText = theBody.text;
+    let title = theBody.title;
+    let text = theBody.text;
 
     if (theBody) {
+        console.info("Test");
         const saveNote = {
             id: uuid(),
-            newTitle,
-            newText,
+            title,
+            text,
         };
-
+        console.info("Test2");
         console.info(saveNote);
-        // const parsedData = JSON.parse(saveNote);
-        // parsedData.push(content);
 
+        console.info("Test3");
         db.push(saveNote);
-        
+        console.info("Test4");
 
         const response = {
             status: 'success',
             body: saveNote,
         };
-
+        console.info("Test5");
+        console.info(response);
         res.json(response);
     } else {
         res.json('Error in saving note');
