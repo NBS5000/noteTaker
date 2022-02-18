@@ -13,36 +13,26 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-
-
-
-
-
 // Routes *****
 // GET
-
 
 // GET Route for homepage
 app.get('/', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/index.html'))
 );
-
 // GET Route for notes page
 app.get('/notes', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
+// GET Route for notes list
 app.get('/api/notes', (req, res) => {
-    // let dbJson;
     fs.readFile('./db/db.json', { encoding: "utf-8" },function (err, data) {
         if(err){ 
             return res.status(500).json({ error: err.message})
         }
         res.json(JSON.parse(data));
     });
-    // res.dbJson;
-    // res.json(db);
 });
-
 
 // POST
 
@@ -50,13 +40,9 @@ app.get('/api/notes', (req, res) => {
 app.post('/api/notes', (req, res) => {
     // Log that a POST request was received
     console.info(`${req.method} request received saving a note`);
-
-    
-    // console.info(req.body);
     const theBody = req.body;
     let title = theBody.title;
     let text = theBody.text;
-
     if (theBody) {
         let saveNote = {
             id: uuid(),
@@ -72,16 +58,10 @@ app.post('/api/notes', (req, res) => {
                 if(err) console.log('Error writing to db: ', err);
             });
         });
-
-
-
-        // db.push(saveNote);
-
         const response = {
             status: 'success',
             body: saveNote,
         };
-        db = require('./db/db.json');
         res.json(response);
     } else {
         res.json('Error in saving note');
@@ -89,15 +69,11 @@ app.post('/api/notes', (req, res) => {
 });
 
 // DELETE 
-
 app.delete('/api/notes/:id', (req, res) =>{
     console.info(`${req.method} request received deleting a note`);
     let x = req.params.id;
-    // console.info(req.params.id);
-
     fs.readFile('./db/db.json', function (err, data) {
         const dbJson = JSON.parse(data);
-
         const removeById = (arr,id) => {
             const requiredIndex = arr.findIndex(el => {
                 return el.id === String(x);
@@ -106,25 +82,19 @@ app.delete('/api/notes/:id', (req, res) =>{
                 return false;
             };
             return !!arr.splice(requiredIndex, 1);
-
         }
         removeById(dbJson,x);
         fs.writeFile('./db/db.json', JSON.stringify(dbJson),function(err, result) {
             if(err) console.log('Error writing to db: ', err);
         });
     });
-
     const response = {
         status: 'success'
     };
-    db = require('./db/db.json');
     res.json(response);
-
 });
 
-
-// PORT 
-
+// PORT *****
 app.listen(PORT, () =>
     console.log(`App listening at http://localhost:${PORT} 🚀`)
 );
