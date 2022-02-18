@@ -43,8 +43,6 @@ app.get('/api/notes', (req, res) => {
 
 // POST
 
-
-
 // POST for saving note
 app.post('/api/notes', (req, res) => {
     // Log that a POST request was received
@@ -87,6 +85,35 @@ app.post('/api/notes', (req, res) => {
     }
 });
 
+// DELETE 
+
+app.delete('/api/notes/:id', (req, res) =>{
+    console.info(`${req.method} request received deleting a note`);
+    let x = req.params.id;
+    // console.info(req.params.id);
+
+    fs.readFile('./db/db.json', function (err, data) {
+        const dbJson = JSON.parse(data);
+
+        const removeById = (arr,id) => {
+            const requiredIndex = arr.findIndex(el => {
+                return el.id === String(x);
+            });
+            if(requiredIndex === -1){
+                return false;
+            };
+            return !!arr.splice(requiredIndex, 1);
+
+        }
+        removeById(dbJson,x);
+        fs.writeFile('./db/db.json', JSON.stringify(dbJson),function(err, result) {
+            if(err) console.log('Error writing to db: ', err);
+        });
+    });
+
+
+
+});
 
 
 // PORT 
